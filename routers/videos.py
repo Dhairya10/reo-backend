@@ -68,7 +68,9 @@ async def get_allowed_videos(
                 title=video.title,
                 channel_name=video.channel_name,
                 category=video.category,
-                language=video.language
+                language=video.language,
+                description=video.description,
+                thumbnail_url=video.thumbnail_url
             ) for video in paginated_data
         ]
         
