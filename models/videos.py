@@ -29,6 +29,7 @@ class Video(BaseModel):
     category: VideoCategory
     language: VideoLanguage
     duration: Optional[timedelta]
+    thumbnail_url: Optional[str]
     created_at: datetime
     updated_at: datetime
 
@@ -36,6 +37,8 @@ class AllowedVideo(BaseModel):
     video_id: UUID4
     external_id: str
     title: str
+    description: Optional[str]
     channel_name: str
     category: VideoCategory
     language: VideoLanguage
+    thumbnail_url: Optional[str]

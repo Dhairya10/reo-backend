@@ -33,7 +33,9 @@ def generate_test_data() -> List[AllowedVideo]:
             title=random.choice(title_list),
             channel_name=random.choice(channel_names),
             category="entertainment",
-            language="english"
+            language="english",
+            description="Sample description",
+            thumbnail_url="https://i.ytimg.com/vi/dQw4w9WgXcQ/hqdefault.jpg"
         )
         test_data.append(video)
     
