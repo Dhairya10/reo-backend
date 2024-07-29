@@ -4,8 +4,3 @@ pydantic
 python-dotenv
 supabase
 vecs
-
-streamlit
-streamlit-option-menu
-streamlit-authenticator
-streamlit-extras
