@@ -6,7 +6,7 @@ from utils.auth import get_supabase, get_current_user
 
 router = APIRouter(prefix="/videos", tags=["videos"])
 
-@router.get("/videos/feed", response_model=List[AllowedVideo])
+@router.get("/feed", response_model=List[AllowedVideo])
 async def get_allowed_videos(
     page: int = Query(1, ge=1),
     page_size: int = Query(50, ge=1, le=100),
