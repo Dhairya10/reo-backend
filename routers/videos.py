@@ -25,7 +25,7 @@ async def get_allowed_videos(
         }
 
         # Call the RPC function
-        response = supabase.rpc('get_allowed_videos_for_user_paginated', rpc_params).execute()
+        response = supabase.rpc('get_allowed_videos_for_user', rpc_params).execute()
         
         if response.data:
             allowed_videos = [AllowedVideo(**video) for video in response.data]
