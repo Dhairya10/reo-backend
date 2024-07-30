@@ -31,13 +31,20 @@ async def add_keyword(keyword: KeywordBase, supabase=Depends(get_supabase), curr
 @router.get("/", response_model=List[Keyword])
 async def get_keywords(supabase=Depends(get_supabase), current_user=Depends(get_current_user)):
     try:
-        response = supabase.table('user_blocked_keywords').select('id,word,user_id').eq('user_id', current_user['id']).execute()
+        response = supabase.table('user_blocked_keywords').select(
+            '*,keywords(*)'
+        ).eq('user_id', current_user['id']).execute()
         
         if response.data:
             keywords = []
             for keyword_data in response.data:
-                if 'id' in keyword_data and 'word' in keyword_data:
-                    keywords.append(Keyword(**keyword_data))
+                if 'keyword_id' in keyword_data and 'keywords' in keyword_data:
+                    keyword = Keyword(
+                        id=keyword_data['keyword_id'],
+                        word=keyword_data['keywords']['word'],
+                        user_id=keyword_data['user_id']
+                    )
+                    keywords.append(keyword)
                 else:
                     logger.warning(f"Skipping invalid keyword data: {keyword_data}")
             logger.info(f"Fetched {len(keywords)} keywords for user {current_user['id']}")
