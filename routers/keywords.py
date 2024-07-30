@@ -58,9 +58,9 @@ async def get_keywords(supabase=Depends(get_supabase), current_user=Depends(get_
 
 
 @router.delete("/{keyword_id}", response_model=dict)
-async def delete_keyword(keyword_id: int, supabase=Depends(get_supabase), current_user=Depends(get_current_user)):
+async def delete_keyword(keyword_id: str, supabase=Depends(get_supabase), current_user=Depends(get_current_user)):
     try:
-        response = supabase.table('user_blocked_keywords').delete().eq('id', keyword_id).eq('user_id', current_user['id']).execute()
+        response = supabase.table('user_blocked_keywords').delete().eq('keyword_id', keyword_id).eq('user_id', current_user['id']).execute()
         
         if response.data:
             logger.info(f"Keyword {keyword_id} deleted for user {current_user['id']}")
