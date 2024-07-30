@@ -19,7 +19,7 @@ async def get_allowed_videos(
 
         # Prepare RPC parameters
         rpc_params = {
-            'user_uuid': str(current_user.id),
+            'user_uuid': str(current_user['id']),
             'p_limit': page_size,
             'p_offset': offset
         }
@@ -29,13 +29,13 @@ async def get_allowed_videos(
         
         if response.data:
             allowed_videos = [AllowedVideo(**video) for video in response.data]
-            logger.info(f"Fetched {len(allowed_videos)} allowed videos for user {current_user.id} (page {page})")
+            logger.info(f"Fetched {len(allowed_videos)} allowed videos for user {current_user['id']} (page {page})")
             return allowed_videos
         else:
-            logger.info(f"No allowed videos found for user {current_user.id} (page {page})")
+            logger.info(f"No allowed videos found for user {current_user['id']} (page {page})")
             return []
     except Exception as e:
-        logger.error(f"Error fetching allowed videos for user {current_user.id}: {str(e)}")
+        logger.error(f"Error fetching allowed videos for user {current_user['id']}: {str(e)}")
         raise HTTPException(status_code=500, detail="Internal server error")
 
 

@@ -10,7 +10,7 @@ router = APIRouter(prefix="/keywords", tags=["keywords"])
 @router.post("/", response_model=dict)
 async def add_keyword(keyword: KeywordBase, supabase=Depends(get_supabase), current_user=Depends(get_current_user)):
     try:
-        result = await process_keyword(keyword, current_user.id, supabase)
+        result = await process_keyword(keyword, current_user['id'], supabase)
         
         if result["success"]:
             return {
@@ -24,38 +24,38 @@ async def add_keyword(keyword: KeywordBase, supabase=Depends(get_supabase), curr
         else:
             raise HTTPException(status_code=500, detail=result["message"])
     except Exception as e:
-        logger.error(f"Error processing keyword for user {current_user.id}: {str(e)}")
+        logger.error(f"Error processing keyword for user {current_user['id']}: {str(e)}")
         raise HTTPException(status_code=500, detail="Internal server error")
 
 
 @router.get("/", response_model=List[Keyword])
 async def get_keywords(supabase=Depends(get_supabase), current_user=Depends(get_current_user)):
     try:
-        response = supabase.table('user_blocked_keywords').select('*').eq('user_id', current_user.id).execute()
+        response = supabase.table('user_blocked_keywords').select('*').eq('user_id', current_user['id']).execute()
         
         if response.data:
             keywords = [Keyword(**keyword) for keyword in response.data]
-            logger.info(f"Fetched {len(keywords)} keywords for user {current_user.id}")
+            logger.info(f"Fetched {len(keywords)} keywords for user {current_user['id']}")
             return keywords
         else:
-            logger.info(f"No keywords found for user {current_user.id}")
+            logger.info(f"No keywords found for user {current_user['id']}")
             return []
     except Exception as e:
-        logger.error(f"Error fetching keywords for user {current_user.id}: {str(e)}")
+        logger.error(f"Error fetching keywords for user {current_user['id']}: {str(e)}")
         raise HTTPException(status_code=500, detail="Internal server error")
 
 
 @router.delete("/{keyword_id}", response_model=dict)
 async def delete_keyword(keyword_id: int, supabase=Depends(get_supabase), current_user=Depends(get_current_user)):
     try:
-        response = supabase.table('user_blocked_keywords').delete().eq('id', keyword_id).eq('user_id', current_user.id).execute()
+        response = supabase.table('user_blocked_keywords').delete().eq('id', keyword_id).eq('user_id', current_user['id']).execute()
         
         if response.data:
-            logger.info(f"Keyword {keyword_id} deleted for user {current_user.id}")
+            logger.info(f"Keyword {keyword_id} deleted for user {current_user['id']}")
             return {"message": f"Keyword {keyword_id} deleted successfully"}
         else:
-            logger.warning(f"Keyword {keyword_id} not found for user {current_user.id}")
+            logger.warning(f"Keyword {keyword_id} not found for user {current_user['id']}")
             raise HTTPException(status_code=404, detail="Keyword not found")
     except Exception as e:
-        logger.error(f"Error deleting keyword {keyword_id} for user {current_user.id}: {str(e)}")
+        logger.error(f"Error deleting keyword {keyword_id} for user {current_user['id']}: {str(e)}")
         raise HTTPException(status_code=500, detail="Internal server error")
