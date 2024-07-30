@@ -4,11 +4,49 @@ from models.videos import AllowedVideo
 from config.logger import logger
 from utils.auth import get_supabase, get_current_user
 
+router = APIRouter(prefix="/videos", tags=["videos"])
+
+@router.get("/videos/feed", response_model=List[AllowedVideo])
+async def get_allowed_videos(
+    page: int = Query(1, ge=1),
+    page_size: int = Query(50, ge=1, le=100),
+    supabase=Depends(get_supabase),
+    current_user=Depends(get_current_user)
+):
+    try:
+        # Calculate offset
+        offset = (page - 1) * page_size
+
+        # Prepare RPC parameters
+        rpc_params = {
+            'user_uuid': str(current_user.id),
+            'p_limit': page_size,
+            'p_offset': offset
+        }
+
+        # Call the RPC function
+        response = supabase.rpc('get_allowed_videos_for_user_paginated', rpc_params).execute()
+        
+        if response.data:
+            allowed_videos = [AllowedVideo(**video) for video in response.data]
+            logger.info(f"Fetched {len(allowed_videos)} allowed videos for user {current_user.id} (page {page})")
+            return allowed_videos
+        else:
+            logger.info(f"No allowed videos found for user {current_user.id} (page {page})")
+            return []
+    except Exception as e:
+        logger.error(f"Error fetching allowed videos for user {current_user.id}: {str(e)}")
+        raise HTTPException(status_code=500, detail="Internal server error")
+
+
+
+
+
+'''
+
 # TODO : Remove after testing
 import random
 from uuid import uuid4
-
-router = APIRouter(prefix="/videos", tags=["videos"])
 
 
 def generate_test_data() -> List[AllowedVideo]:
@@ -80,35 +118,4 @@ async def get_allowed_videos(
         logger.error(f"Error in get_allowed_videos: {str(e)}")
         raise HTTPException(status_code=500, detail="Internal server error")
 
-
-# @router.get("/videos/feed", response_model=List[AllowedVideo])
-# async def get_allowed_videos(
-#     page: int = Query(1, ge=1),
-#     page_size: int = Query(50, ge=1, le=100),
-#     supabase=Depends(get_supabase),
-#     current_user=Depends(get_current_user)
-# ):
-#     try:
-#         # Calculate offset
-#         offset = (page - 1) * page_size
-
-#         # Prepare RPC parameters
-#         rpc_params = {
-#             'user_uuid': str(current_user.id),
-#             'p_limit': page_size,
-#             'p_offset': offset
-#         }
-
-#         # Call the RPC function
-#         response = supabase.rpc('get_allowed_videos_for_user_paginated', rpc_params).execute()
-        
-#         if response.data:
-#             allowed_videos = [AllowedVideo(**video) for video in response.data]
-#             logger.info(f"Fetched {len(allowed_videos)} allowed videos for user {current_user.id} (page {page})")
-#             return allowed_videos
-#         else:
-#             logger.info(f"No allowed videos found for user {current_user.id} (page {page})")
-#             return []
-#     except Exception as e:
-#         logger.error(f"Error fetching allowed videos for user {current_user.id}: {str(e)}")
-#         raise HTTPException(status_code=500, detail="Internal server error")
+'''

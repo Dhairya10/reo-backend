@@ -3,7 +3,7 @@ from fastapi import FastAPI
 from dotenv import load_dotenv
 from contextlib import asynccontextmanager
 from fastapi.middleware.cors import CORSMiddleware
-from routers import channels, videos, keywords, profiles
+from routers import videos, keywords
 from supabase import create_client
 from utils.middleware import RateLimitMiddleware
 from config.logger import logger
@@ -30,9 +30,7 @@ app = FastAPI(
 
 # Include the routers
 app.include_router(videos.router)
-app.include_router(channels.router)
 app.include_router(keywords.router)
-app.include_router(profiles.router)
 
 # Add middlewares
 app.add_middleware(
