@@ -63,7 +63,7 @@ def query_database(db, query_text, limit=5, similarity_threshold=0.75):
 async def process_keyword(keyword: KeywordBase, user_id: str, supabase: Client):
     try:
         # Initialize the SupabaseVectorDB
-        db = get_supabase_vector_db()
+        db = await get_supabase_vector_db()
 
         # Run similarity search
         similar_videos = query_database(db, keyword.word)
