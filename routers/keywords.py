@@ -31,15 +31,20 @@ async def add_keyword(keyword: KeywordBase, supabase=Depends(get_supabase), curr
 @router.get("/", response_model=List[Keyword])
 async def get_keywords(supabase=Depends(get_supabase), current_user=Depends(get_current_user)):
     try:
-        response = supabase.table('user_blocked_keywords').select('*').eq('user_id', current_user['id']).execute()
+        response = supabase.table('user_blocked_keywords').select('id,word,user_id').eq('user_id', current_user['id']).execute()
         
         if response.data:
-            keywords = [Keyword(**keyword) for keyword in response.data]
+            keywords = []
+            for keyword_data in response.data:
+                if 'id' in keyword_data and 'word' in keyword_data:
+                    keywords.append(Keyword(**keyword_data))
+                else:
+                    logger.warning(f"Skipping invalid keyword data: {keyword_data}")
             logger.info(f"Fetched {len(keywords)} keywords for user {current_user['id']}")
-            return keywords
+            return {"status": "success", "data": keywords}
         else:
             logger.info(f"No keywords found for user {current_user['id']}")
-            return []
+            return {"status": "success", "data": []}
     except Exception as e:
         logger.error(f"Error fetching keywords for user {current_user['id']}: {str(e)}")
         raise HTTPException(status_code=500, detail="Internal server error")
@@ -52,7 +57,7 @@ async def delete_keyword(keyword_id: int, supabase=Depends(get_supabase), curren
         
         if response.data:
             logger.info(f"Keyword {keyword_id} deleted for user {current_user['id']}")
-            return {"message": f"Keyword {keyword_id} deleted successfully"}
+            return {"status": "success", "message": f"Keyword {keyword_id} deleted successfully"}
         else:
             logger.warning(f"Keyword {keyword_id} not found for user {current_user['id']}")
             raise HTTPException(status_code=404, detail="Keyword not found")
