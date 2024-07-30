@@ -18,6 +18,21 @@ class SupabaseVectorDB:
         except Exception as e:
             raise ConnectionError(f"Failed to connect to Supabase: {str(e)}")
 
+
+    def create_index(self, method: str = "auto", measure: str = "cosine_distance"):
+        """
+        Create an index for the collection.
+        
+        :param method: Indexing method ('auto', 'hnsw', or 'ivfflat')
+        :param measure: Distance measure for the index
+        """
+        try:
+            self.collection.create_index(method=method, measure=measure)
+            print(f"Successfully created index with method: {method} and measure: {measure}")
+        except Exception as e:
+            raise RuntimeError(f"Failed to create index: {str(e)}")
+        
+
     def add_vectors(self, records: List[tuple], batch_size: int = 1000):
         """
         Add vectors to the collection.
@@ -32,6 +47,7 @@ class SupabaseVectorDB:
             print(f"Successfully added {len(records)} vectors to the collection.")
         except Exception as e:
             raise RuntimeError(f"Failed to add vectors: {str(e)}")
+
 
     def query_vectors(self, 
                       query_vector: Union[List[float], np.ndarray],
@@ -64,18 +80,6 @@ class SupabaseVectorDB:
         except Exception as e:
             raise RuntimeError(f"Failed to query vectors: {str(e)}")
 
-    def create_index(self, method: str = "auto", measure: str = "cosine_distance"):
-        """
-        Create an index for the collection.
-        
-        :param method: Indexing method ('auto', 'hnsw', or 'ivfflat')
-        :param measure: Distance measure for the index
-        """
-        try:
-            self.collection.create_index(method=method, measure=measure)
-            print(f"Successfully created index with method: {method} and measure: {measure}")
-        except Exception as e:
-            raise RuntimeError(f"Failed to create index: {str(e)}")
 
     def delete_vectors(self, ids: Optional[List[str]] = None, filters: Optional[Dict] = None):
         """
