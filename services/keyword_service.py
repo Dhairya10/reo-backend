@@ -81,11 +81,12 @@ async def process_keyword(keyword: KeywordBase, user_id: str, supabase: Client):
                 'keyword_id': keyword_id
             }).execute()
 
-            # For each video_id returned from the list, add the keyword uuid to videos table
+            # For each video_id returned from the list, add an entry to video_keywords table
             for video_id in similar_videos:
-                supabase.table('videos').update({
-                    'keywords': f"COALESCE(keywords, '{{}}') || '{{{keyword_id}}}'"
-                }).eq('id', video_id).execute()             
+                supabase.table('video_keywords').insert({
+                    'video_id': video_id,
+                    'keyword_id': keyword_id
+                }).execute()
 
             logger.info(f"Keyword '{keyword.word}' processed and added for user {user_id}")
             return {
