@@ -54,7 +54,7 @@ class SupabaseVectorDB:
                       limit: int = 5,
                       filters: Optional[Dict] = None,
                       measure: str = "cosine_distance",
-                      include_value: bool = False,
+                      include_value: bool = True,
                       include_metadata: bool = True) -> List[Dict]:
         """
         Query vectors from the collection.
