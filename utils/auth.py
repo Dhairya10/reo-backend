@@ -1,7 +1,7 @@
 from fastapi.security import HTTPBearer
 from fastapi import Request
 from config.settings import TEST_USER_ID, DB_CONNECTION_STRING, COLLECTION_NAME
-from supabase_vector import SupabaseVectorDB
+from utils.supabase_vector import SupabaseVectorDB
 
 security = HTTPBearer()
 
