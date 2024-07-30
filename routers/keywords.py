@@ -35,8 +35,8 @@ async def get_keywords(supabase=Depends(get_supabase), current_user=Depends(get_
             '*,keywords(*)'
         ).eq('user_id', current_user['id']).execute()
         
+        keywords = []
         if response.data:
-            keywords = []
             for keyword_data in response.data:
                 if 'keyword_id' in keyword_data and 'keywords' in keyword_data:
                     keyword = Keyword(
@@ -48,10 +48,10 @@ async def get_keywords(supabase=Depends(get_supabase), current_user=Depends(get_
                 else:
                     logger.warning(f"Skipping invalid keyword data: {keyword_data}")
             logger.info(f"Fetched {len(keywords)} keywords for user {current_user['id']}")
-            return {"status": "success", "data": keywords}
         else:
             logger.info(f"No keywords found for user {current_user['id']}")
-            return {"status": "success", "data": []}
+        
+        return keywords
     except Exception as e:
         logger.error(f"Error fetching keywords for user {current_user['id']}: {str(e)}")
         raise HTTPException(status_code=500, detail="Internal server error")
