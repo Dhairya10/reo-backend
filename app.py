@@ -3,7 +3,7 @@ from fastapi import FastAPI
 from dotenv import load_dotenv
 from contextlib import asynccontextmanager
 from fastapi.middleware.cors import CORSMiddleware
-from routers import videos, keywords
+from routers import videos, keywords, stories
 from supabase import create_client
 from utils.middleware import RateLimitMiddleware
 from config.logger import logger
@@ -31,6 +31,7 @@ app = FastAPI(
 # Include the routers
 app.include_router(videos.router)
 app.include_router(keywords.router)
+app.include_router(stories.router)
 
 # Add middlewares
 app.add_middleware(
@@ -44,8 +45,8 @@ app.add_middleware(
 # Apply rate limiting only to stories routes
 app.add_middleware(
     RateLimitMiddleware,
-    rate_limit_duration=RATE_LIMIT_DURATION,  # 1 minute
-    max_requests=RATE_LIMIT_MAX_REQUESTS,  # 10 requests per minute
+    rate_limit_duration=RATE_LIMIT_DURATION,
+    max_requests=RATE_LIMIT_MAX_REQUESTS,
     include_paths=["/stories"]  # Apply only to paths starting with /stories
 )
 
