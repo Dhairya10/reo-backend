@@ -45,8 +45,8 @@ app.add_middleware(
 # Apply rate limiting only to stories routes
 app.add_middleware(
     RateLimitMiddleware,
-    rate_limit_duration=RATE_LIMIT_DURATION,
-    max_requests=RATE_LIMIT_MAX_REQUESTS,
+    rate_limit_duration=int(RATE_LIMIT_DURATION),
+    max_requests=int(RATE_LIMIT_MAX_REQUESTS),
     include_paths=["/stories"]  # Apply only to paths starting with /stories
 )
 
