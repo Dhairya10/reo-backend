@@ -1,22 +1,21 @@
-from pydantic import BaseModel, UUID4
+from pydantic import BaseModel
 from typing import List
-from datetime import datetime, timedelta
+from datetime import datetime
 
-class GeneratedStory(BaseModel):
-    id: UUID4
-    child_id: UUID4
-    title: str
+class GeneratedStoryBase(BaseModel):
     topic: str
     characters: List[str]
+    duration: int
+
+class GeneratedStoryCreate(GeneratedStoryBase):
+    pass
+
+class GeneratedStory(GeneratedStoryBase):
+    id: str
+    user_id: str
+    story_text: str
     audio_url: str
-    audio_duration: timedelta
     created_at: datetime
-    updated_at: datetime
 
-class GeneratedStoryCreate(BaseModel):
-    child_id: UUID4
-    title: str
-    topic: str
-    characters: List[str]
-    audio_url: str
-    audio_duration: timedelta
+    class Config:
+        from_attributes = True
