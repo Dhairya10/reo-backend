@@ -11,6 +11,7 @@ Reo is a tool for managing video content filtering
 ## Demo
 
 You can try out the demo [here](https://reokids.replit.app/)
+You can find the demo video [here](https://www.loom.com/share/413490209e06468bb124075878509b5d?sid=bb0861d4-da52-4d43-9d16-5aa64ba106ea)
 
 ## Getting Started
 
